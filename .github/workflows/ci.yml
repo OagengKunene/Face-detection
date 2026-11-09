@@ -1,0 +1,48 @@
+name: Face-detection checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.12", "3.14"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m ruff check .
+      - run: python -m ruff format --check .
+      - run: python -m pytest -q -m "not integration"
+      - run: python run.py self-test
+      - run: python -m build
+
+  real-models:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python run.py models --model-dir models
+      - run: python scripts/fetch_test_fixtures.py --destination test-fixtures
+      - run: python -m pytest -q -m integration -s
+        env:
+          BIOGUARD_MODELS: models
+          BIOGUARD_FACE_A: test-fixtures/portrait_a.png
+          BIOGUARD_FACE_B: test-fixtures/portrait_b.jpg

@@ -1,0 +1,5 @@
+# Tested runtime; also declared in pyproject.toml. Python 3.12-3.14, 64-bit.
+opencv-python-headless==5.0.0.93
+numpy==2.5.4
+cryptography==50.0.2
+Pillow==13.0.0
