@@ -1,4 +1,5 @@
 # Face-detection · Python + OpenCV
+<img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/77f73474-501c-4668-a194-3572ea354f0a" />
 
 A desktop biometric project for **face enrolment and one-to-one identity verification**.
 Choose an enrolled Person ID, look at the webcam, and receive a verified / not verified
